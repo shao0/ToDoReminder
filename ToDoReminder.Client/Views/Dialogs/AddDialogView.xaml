@@ -1,0 +1,146 @@
+﻿<UserControl
+    x:Class="ToDoReminder.Client.Views.Dialogs.AddDialogView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:g="clr-namespace:ToDoReminder.Client.Common"
+    xmlns:local="clr-namespace:ToDoReminder.Client.Views.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:v="clr-namespace:ToDoReminder.Client.ViewModels.Dialogs"
+    d:DataContext="{d:DesignInstance Type=v:AddDialogViewModel}"
+    d:DesignHeight="550"
+    d:DesignWidth="800"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <md:DialogHost>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <md:ColorZone
+                Padding="10"
+                md:ShadowAssist.ShadowDepth="Depth2"
+                Mode="PrimaryMid">
+                <TextBlock
+                    HorizontalAlignment="Left"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Text="{Binding Title}" />
+            </md:ColorZone>
+            <DockPanel Grid.Row="1">
+                <TextBox
+                    Width="240"
+                    Margin="20"
+                    md:HintAssist.Hint="请输入概要"
+                    AcceptsReturn="True"
+                    DockPanel.Dock="Top"
+                    Text="{Binding Model.Title}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    Width="240"
+                    Height="100"
+                    Margin="20"
+                    md:HintAssist.Hint="请输入内容"
+                    AcceptsReturn="True"
+                    Cursor="IBeam"
+                    DockPanel.Dock="Top"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    Text="{Binding Model.Description}"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+
+            </DockPanel>
+            <DockPanel Name="ToDoReminderControl">
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Setter Property="Grid.Row" Value="2" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="LastChildFill" Value="False" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ModelType}" Value="Memo">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+                <StackPanel
+                    Margin="20"
+                    DockPanel.Dock="Top"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        MinWidth="200"
+                        VerticalAlignment="Center"
+                        Cursor="IBeam"
+                        Text="{Binding Model.ReminderDateTime, StringFormat={}{0:yyyy年MM月dd日 HH:mm:ss}}"
+                        TextWrapping="Wrap" />
+                    <Button
+                        Name="ToDoReminderButton"
+                        Margin="8,0,0,0"
+                        md:DialogHost.DialogClosingAttached="CombinedDialogClosingEventHandler"
+                        md:DialogHost.DialogOpenedAttached="CombinedDialogOpenedEventHandler"
+                        Command="{x:Static md:DialogHost.OpenDialogCommand}"
+                        Content="..."
+                        Cursor="Hand">
+                        <Button.CommandParameter>
+                            <Grid Margin="-1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <Calendar x:Name="CombinedCalendar" />
+                                    <md:Clock
+                                        x:Name="CombinedClock"
+                                        DisplayAutomation="CycleWithSeconds"
+                                        Is24Hours="True" />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Row="1"
+                                    Margin="8"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                                        CommandParameter="0"
+                                        Content="取消"
+                                        Style="{StaticResource MaterialDesignFlatButton}" />
+                                    <Button
+                                        Command="{x:Static md:DialogHost.CloseDialogCommand}"
+                                        CommandParameter="1"
+                                        Content="确定"
+                                        Style="{StaticResource MaterialDesignFlatButton}" />
+                                </StackPanel>
+                            </Grid>
+                        </Button.CommandParameter>
+                    </Button>
+                </StackPanel>
+                <ComboBox
+                    x:Name="OutlinedComboBox"
+                    Width="240"
+                    md:HintAssist.Hint="完成状态"
+                    DockPanel.Dock="Top"
+                    ItemsSource="{x:Static g:Global.StatusList}"
+                    SelectedIndex="{Binding ModelModel.Status}"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+            </DockPanel>
+            <StackPanel
+                Grid.Row="3"
+                Margin="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Button Command="{Binding SaveCommand}" Content="确定" />
+                <Button
+                    Margin="20,0,0,0"
+                    Command="{Binding CancelCommand}"
+                    Content="取消" />
+            </StackPanel>
+        </Grid>
+    </md:DialogHost>
+</UserControl>

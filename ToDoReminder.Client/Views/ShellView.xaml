@@ -1,0 +1,202 @@
+﻿<Window
+    x:Class="ToDoReminder.Client.Views.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:g="clr-namespace:ToDoReminder.Client.Common"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:v="clr-namespace:ToDoReminder.Client.ViewModels"
+    Title="MainWindow"
+    Width="1280"
+    Height="768"
+    d:DataContext="{d:DesignInstance Type=v:ShellViewModel}"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Background="Transparent"
+    ResizeMode="NoResize"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="-1" />
+    </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <Style
+            x:Key="RestoreToggleButton"
+            BasedOn="{StaticResource MaterialDesignToolButton}"
+            TargetType="ToggleButton">
+            <Setter Property="Content" Value="{md:PackIcon Kind=WindowMaximize, Size=24}" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content" Value="{md:PackIcon Kind=WindowRestore, Size=24}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+    <md:Card
+        Margin="3"
+        HorizontalAlignment="Stretch"
+        md:ShadowAssist.ShadowDepth="Depth1">
+        <md:DialogHost
+            Name="DialogHostControl"
+            DialogTheme="Inherit"
+            Identifier="RootDialog"
+            SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
+            <md:DrawerHost IsLeftDrawerOpen="{Binding OpenLeft}">
+                <md:DrawerHost.LeftDrawerContent>
+                    <DockPanel MinWidth="220">
+                        <md:ColorZone
+                            MinHeight="80"
+                            Padding="16"
+                            DockPanel.Dock="Top"
+                            Mode="PrimaryMid">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Ellipse
+                                    Width="50"
+                                    Height="50"
+                                    Margin="10"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding CurrentUser.UserIcon}" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="18"
+                                    FontWeight="Bold"
+                                    Text="{Binding CurrentUser.NickName}" />
+                            </StackPanel>
+                        </md:ColorZone>
+                        <ListBox
+                            x:Name="DemoItemsListBox"
+                            Margin="0,16,0,16"
+                            AutomationProperties.Name="DemoPagesListBox"
+                            ItemsSource="{Binding Menus}"
+                            SelectedItem="{Binding CheckedMenu}"
+                            Style="{StaticResource MaterialDesignNavigationPrimaryListBox}">
+                            <ListBox.Resources>
+                                <Style BasedOn="{StaticResource MaterialDesignScrollBarMinimal}" TargetType="ScrollBar" />
+                            </ListBox.Resources>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <md:PackIcon
+                                            VerticalAlignment="Center"
+                                            DockPanel.Dock="Left"
+                                            FontSize="30"
+                                            Kind="{Binding Icon}" />
+                                        <TextBlock
+                                            Margin="10,0"
+                                            DockPanel.Dock="Left"
+                                            FontSize="20"
+                                            Text="{Binding Title}" />
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </md:DrawerHost.LeftDrawerContent>
+                <DockPanel>
+                    <md:ColorZone
+                        x:Name="Header"
+                        Padding="16"
+                        md:ShadowAssist.ShadowDepth="Depth2"
+                        DockPanel.Dock="Top"
+                        Mode="PrimaryMid">
+                        <DockPanel>
+                            <UniformGrid Columns="4">
+                                <ToggleButton
+                                    x:Name="MenuToggleButton"
+                                    Margin="5"
+                                    AutomationProperties.Name="HamburgerToggleButton"
+                                    Cursor="Hand"
+                                    IsChecked="{Binding OpenLeft}"
+                                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+
+                                <Button
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Command="{Binding GoBackCommand}"
+                                    Content="{md:PackIcon Kind=ArrowLeft,
+                                                          Size=24}"
+                                    Cursor="Hand"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                                <Button
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Command="{Binding GoForwardCommand}"
+                                    Content="{md:PackIcon Kind=ArrowRight,
+                                                          Size=24}"
+                                    Cursor="Hand"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                                <Button
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Command="{Binding HomeCommand}"
+                                    Content="{md:PackIcon Kind=Home,
+                                                          Size=24}"
+                                    Cursor="Hand"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                            </UniformGrid>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Click="Minimize_Click"
+                                    Content="{md:PackIcon Kind=WindowMinimize,
+                                                          Size=24}"
+                                    Cursor="Hand"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                                <ToggleButton
+                                    Margin="10,0"
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Click="Restore_Click"
+                                    Cursor="Hand"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource RestoreToggleButton}" />
+                                <Button
+                                    md:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
+                                    Click="Close_Click"
+                                    Content="{md:PackIcon Kind=WindowClose,
+                                                          Size=24}"
+                                    Cursor="Hand"
+                                    Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
+                                    Style="{StaticResource MaterialDesignToolButton}" />
+                            </StackPanel>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                AutomationProperties.Name="Material Design In XAML Toolkit"
+                                DockPanel.Dock="Left"
+                                FontSize="22"
+                                Text="{Binding CheckedMenu.Title}" />
+                        </DockPanel>
+                    </md:ColorZone>
+                    <md:ColorZone VerticalAlignment="Stretch">
+                        <Grid>
+                            <ContentControl prism:RegionManager.RegionName="{x:Static g:Global.ContentRegion}" />
+                            <md:Snackbar
+                                x:Name="MainSnackbar"
+                                Grid.Row="1"
+                                VerticalAlignment="Top"
+                                MessageQueue="{md:MessageQueue}" />
+                        </Grid>
+                    </md:ColorZone>
+                </DockPanel>
+            </md:DrawerHost>
+        </md:DialogHost>
+    </md:Card>
+</Window>
