@@ -59,7 +59,6 @@ namespace ToDoReminder.Client.ViewModels.Statistics
                     }
 
                 }
-                ea.SendMessage("新增完成");
             }
             else
             {

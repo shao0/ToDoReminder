@@ -65,8 +65,6 @@ namespace ToDoReminder.Client.ViewModels.Statistics
                     v1.Value = statistic.ToDoReminderCompletedCount;
                     v2.Value = statistic.ToDoReminderCount - statistic.ToDoReminderCompletedCount;
                 }
-
-                ea.SendMessage("新增完成");
             }
             else
             {

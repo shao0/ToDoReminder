@@ -64,7 +64,7 @@ namespace ToDoReminder.Client
             containerRegistry.RegisterSingleton<ILog, LogHelper>();
             containerRegistry.RegisterSingleton<ITimerHelper, TimerHelper>();
             containerRegistry.RegisterSingleton<PaletteHelper>();
-            var apiUrl = "ApiUrl";
+            const string apiUrl = "ApiUrl";
             containerRegistry.GetContainer().Register<HttpRestClient>(made: Parameters.Of.Type<string>(serviceKey: apiUrl));
             containerRegistry.GetContainer().RegisterInstance(apiUrl.GetConnectionStringsConfig(), serviceKey: apiUrl);
             containerRegistry.RegisterInstance(new MapperConfiguration(new AutoMapperProFile()).CreateMapper());

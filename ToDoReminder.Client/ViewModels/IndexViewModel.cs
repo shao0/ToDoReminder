@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ToDoReminder.Client.Common;
@@ -36,10 +37,8 @@ namespace ToDoReminder.Client.ViewModels
         private readonly ILog log;
         #endregion
 
-        DateTime? ReminderTime;
 
-        public TaskBar[] TaskBars { get; set; } = new TaskBar[]
-        {
+        public TaskBar[] TaskBars { get; set; } = {
             new TaskBar() { Icon = "ClockFast", Title = "汇总", Color = "#FF0CA0FF", Target = "ToDoReminderView" },
             new TaskBar() { Icon = "ClockCheckOutline", Title = "已完成", Color = "#FF1ECA3A", Target = "ToDoReminderView" },
             new TaskBar() { Icon = "ChartLineVariant", Title = "完成比例", Color = "#FF02C6DC", Target = "StatisticView" },
@@ -47,8 +46,12 @@ namespace ToDoReminder.Client.ViewModels
         };
 
         #region 提醒事项
-        private List<ToDoReminderModel> ObserveList = new List<ToDoReminderModel>();
-        private List<ToDoReminderModel> Reminders = new List<ToDoReminderModel>();
+        DateTime? ReminderTime;
+
+        private readonly List<ToDoReminderModel> _observeList = new List<ToDoReminderModel>();
+
+        private readonly List<ToDoReminderModel> _reminders = new List<ToDoReminderModel>();
+
         public ObservableCollection<ToDoReminderModel> ToDoReminders { get; set; } = new ObservableCollection<ToDoReminderModel>();
         #endregion
 
@@ -62,7 +65,7 @@ namespace ToDoReminder.Client.ViewModels
             IStatisticService statisticsService,
             IEventAggregator ea,
             ITimerHelper timer,
-            ILog Log)
+            ILog log)
         {
             this.toDoReminderService = toDoReminderService;
             this.memoService = memoService;
@@ -71,7 +74,7 @@ namespace ToDoReminder.Client.ViewModels
             this.statisticsService = statisticsService;
             this.ea = ea;
             this.timer = timer;
-            log = Log;
+            this.log = log;
         }
 
         #region DateTime NowTime 当前时间
@@ -128,7 +131,7 @@ namespace ToDoReminder.Client.ViewModels
             QueryToDoReminderList();
             QueryMemoList();
             await RefreshStatistics();
-            InitalTimer();
+            InitialTimer();
             ea.Loading(false);
         }
 
@@ -145,24 +148,24 @@ namespace ToDoReminder.Client.ViewModels
             }
         }
 
-        async void QueryToDoReminderList()
+        private async void QueryToDoReminderList()
         {
             var apiResponse = await toDoReminderService.QueryPagedListAsync(new ToDoReminderParameter { IndexPage = 0, SizePage = 200, Status = 0 });
             if (apiResponse.Status)
             {
                 ToDoReminders.Clear();
-                Reminders.Clear();
+                _reminders.Clear();
                 var nowTime = DateTime.Now;
                 foreach (var item in mapper.Map<List<ToDoReminderModel>>(apiResponse.Result.Items))
                 {
                     ToDoReminders.Add(item);
                     if (item.ReminderDateTime <= nowTime)
                     {
-                        Reminders.Add(item);
+                        _reminders.Add(item);
                     }
                     else
                     {
-                        ObserveList.Add(item);
+                        _observeList.Add(item);
                     }
                 }
                 ShowReminder();
@@ -174,7 +177,7 @@ namespace ToDoReminder.Client.ViewModels
             }
         }
 
-        async void QueryMemoList()
+        private async void QueryMemoList()
         {
             var apiResponse = await memoService.GetPagedListAsync(new QueryParameter { IndexPage = 0, SizePage = 200 });
             if (apiResponse.Status)
@@ -323,7 +326,7 @@ namespace ToDoReminder.Client.ViewModels
                 if (model.Id == 0)
                 {
                     ToDoReminders.Add(newModel);
-                    ObserveList.Add(newModel);
+                    _observeList.Add(newModel);
                 }
                 await RefreshStatistics();
             }
@@ -334,7 +337,7 @@ namespace ToDoReminder.Client.ViewModels
             }
         }
 
-        void InitalTimer()
+        private void InitialTimer()
         {
             void Timer_Elapsed(object sender, EventArgs e)
             {
@@ -344,13 +347,13 @@ namespace ToDoReminder.Client.ViewModels
                     ShowReminder();
                     return;
                 }
-                if (ObserveList?.Count > 0)
+                if (_observeList?.Count > 0)
                 {
-                    var first = ObserveList.OrderBy(x => x.ReminderDateTime).First();
+                    var first = _observeList.OrderBy(x => x.ReminderDateTime).First();
                     if (first.ReminderDateTime < NowTime)
                     {
-                        ObserveList.Remove(first);
-                        Reminders.Add(first);
+                        _observeList.Remove(first);
+                        _reminders.Add(first);
                         ShowReminder();
                     }
                 }
@@ -359,10 +362,10 @@ namespace ToDoReminder.Client.ViewModels
             timer.Elapsed += Timer_Elapsed;
         }
 
-        void ShowReminder()
+        private void ShowReminder()
         {
             ReminderTime = null;
-            DialogParameters parameter = new DialogParameters { { "ModelList", Reminders }, };
+            var parameter = new DialogParameters { { "ModelList", _reminders }, };
             dialogHost.ShowEdgeWindow("ReminderView", parameter, async result =>
             {
                 if (result.Result == ButtonResult.OK)
@@ -371,10 +374,10 @@ namespace ToDoReminder.Client.ViewModels
                     foreach (var item in modelList)
                     {
                         await ToDoReminderSave(item);
-                        Reminders.Remove(item);
+                        _reminders.Remove(item);
                     }
                 }
-                if (Reminders.Count != 0)
+                if (_reminders.Count != 0)
                 {
                     ReminderTime = NowTime.AddMinutes(30);
                 }
