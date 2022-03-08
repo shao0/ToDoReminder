@@ -27,14 +27,7 @@ namespace ToDoReminder.Client.Services.Http
                 request.AddParameter("param", JsonConvert.SerializeObject(baseRequest.Parameter), ParameterType.RequestBody);
             _client.BaseUrl  = new Uri($"{_url}{baseRequest.Route}");
             var response = await _client.ExecuteAsync(request);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return JsonConvert.DeserializeObject<ApiResponse>(response.Content);
-            }
-            else
-            {
-                return new ApiResponse(response.ErrorMessage);
-            }
+            return response.StatusCode == System.Net.HttpStatusCode.OK ? JsonConvert.DeserializeObject<ApiResponse>(response.Content) : new ApiResponse(response.ErrorMessage);
         }
 
         public async Task<ApiResponse<T>> ExecuteAsync<T>(BaseRequest baseRequest)
@@ -46,14 +39,7 @@ namespace ToDoReminder.Client.Services.Http
                 request.AddParameter("param", JsonConvert.SerializeObject(baseRequest.Parameter), ParameterType.RequestBody);
             _client.BaseUrl  = new Uri($"{_url}{baseRequest.Route}");
             var response = await _client.ExecuteAsync(request);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                return JsonConvert.DeserializeObject<ApiResponse<T>>(response.Content);
-            }
-            else
-            {
-                return new ApiResponse<T>(response.ErrorMessage);
-            }
+            return response.StatusCode == System.Net.HttpStatusCode.OK ? JsonConvert.DeserializeObject<ApiResponse<T>>(response.Content) : new ApiResponse<T>(response.ErrorMessage);
         }
 
 

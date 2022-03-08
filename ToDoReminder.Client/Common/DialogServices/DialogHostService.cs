@@ -47,16 +47,17 @@ namespace ToDoReminder.Client.Common.DialogServices
 
             viewModel.DialogHostName = dialogHostName;
 
-            DialogOpenedEventHandler eventHandler = (sender, eventArgs) =>
+            void EventHandler(object sender, DialogOpenedEventArgs eventArgs)
             {
                 if (viewModel is IDialogHostAware aware)
                 {
-                    aware.OnDialogOpend(parameters);
+                    aware.OnDialogOpened(parameters);
                 }
-                eventArgs.Session.UpdateContent(content);
-            };
 
-            return (IDialogResult)await DialogHost.Show(dialogContent, viewModel.DialogHostName, eventHandler);
+                eventArgs.Session.UpdateContent(content);
+            }
+
+            return (IDialogResult)await DialogHost.Show(dialogContent, viewModel.DialogHostName, EventHandler);
         }
 
         public void ShowEdgeWindow(string dialogName, IDialogParameters parameters, Action<IDialogResult> callback, Location location = Location.RightBottom, string windowName = null)
@@ -75,8 +76,8 @@ namespace ToDoReminder.Client.Common.DialogServices
 
             ConfigureDialogWindowEvents(dialog, callback);
 
-            var contetnt = ConfigureDialogContent(dialogName, dialog, parameters);
-            SetAnimaction(dialog, contetnt, location);
+            var content = ConfigureDialogContent(dialogName, dialog, parameters);
+            SetAnimaction(dialog, content, location);
 
             dialog.Show();
 

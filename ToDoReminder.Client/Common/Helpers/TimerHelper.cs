@@ -12,7 +12,7 @@ namespace ToDoReminder.Client.Common.Helpers
     public class TimerHelper : ITimerHelper
     {
 
-        DispatcherTimer timer;
+        private DispatcherTimer _timer;
 
         public event EventHandler Elapsed;
 
@@ -23,25 +23,23 @@ namespace ToDoReminder.Client.Common.Helpers
 
         public void Start(int intervals = 1000)
         {
-            if (timer == null)
+            if (_timer == null)
             {
-                timer = new DispatcherTimer();
+                _timer = new DispatcherTimer();
             }
-            timer.Interval = TimeSpan.FromMilliseconds(intervals);
-            timer.Tick -= Timer_Tick;
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _timer.Interval = TimeSpan.FromMilliseconds(intervals);
+            _timer.Tick -= Timer_Tick;
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
 
 
         public void Stop()
         {
-            if (timer != null)
-            {
-                timer.Tick -= Timer_Tick;
-                timer.Stop();
-                timer = null;
-            }
+            if (_timer == null) return;
+            _timer.Tick -= Timer_Tick;
+            _timer.Stop();
+            _timer = null;
         }
 
     }

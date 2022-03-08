@@ -42,7 +42,7 @@ namespace ToDoReminder.Server.Service
 
         public async Task<IPagedList<T>> GetPagedListAsync(Expression<Func<T, bool>> funcWhere, int pageIndex = 0, int pageSize = 20)
         {
-            var list = _context.Set<T>().Where(funcWhere).OrderBy(t => t.CreateDateTiem);
+            var list = _context.Set<T>().Where(funcWhere).OrderBy(t => t.CreateDateTime);
             return await list.ToPagedListAsync(pageIndex, pageSize);
         }
         public async Task<T> GetSingleAsync(int id)

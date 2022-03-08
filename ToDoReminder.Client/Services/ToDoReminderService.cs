@@ -19,7 +19,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<PagedList<ToDoReminderDTO>>> QueryPagedListAsync(ToDoReminderParameter parameter)
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.GET;
             request.Route = $"{serviceName}/QueryList?IndexPage={parameter.IndexPage}&SizePage={parameter.SizePage}&Search={parameter.Search}&Status={parameter.Status}";
             return await client.ExecuteAsync<PagedList<ToDoReminderDTO>>(request);

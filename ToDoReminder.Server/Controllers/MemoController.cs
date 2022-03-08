@@ -28,9 +28,9 @@ namespace ToDoReminder.Server.Controllers
                     || t.Title.Contains(query.Search)
                     || t.Description.Contains(query.Search))
                     && (query.Start == null
-                    || t.CreateDateTiem > query.Start
+                    || t.CreateDateTime > query.Start
                     && query.End == null
-                    || t.CreateDateTiem < query.End)
+                    || t.CreateDateTime < query.End)
                     , query.IndexPage
                     , query.SizePage);
                 return new ApiResponse(pagedList.PagedListConverter(items => _mapper.Map<IList<MemoDTO>>(items)));

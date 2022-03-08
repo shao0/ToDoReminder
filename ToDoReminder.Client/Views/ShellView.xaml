@@ -190,7 +190,6 @@
                             <ContentControl prism:RegionManager.RegionName="{x:Static g:Global.ContentRegion}" />
                             <md:Snackbar
                                 x:Name="MainSnackbar"
-                                Grid.Row="1"
                                 VerticalAlignment="Top"
                                 MessageQueue="{md:MessageQueue}" />
                         </Grid>

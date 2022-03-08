@@ -94,7 +94,11 @@ namespace ToDoReminder.Client.Common
         {
             var icon = new NotifyIcon();
             icon.Text = "ToDoReminder";
-            icon.Icon = new System.Drawing.Icon(System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/ToDoReminder.Client;component/Common/Resources/Images/icon.ico", UriKind.Absolute)).Stream);
+            var stream = System.Windows.Application
+                .GetResourceStream(new Uri("pack://application:,,,/ToDoReminder.Client;component/Common/Resources/Images/icon.ico",
+                    UriKind.Absolute))?.Stream;
+            if (stream != null)
+                icon.Icon = new System.Drawing.Icon(stream);
             icon.ContextMenu = new ContextMenu();
             var closeMenu = new MenuItem();
             closeMenu.Text = "退出";
@@ -102,11 +106,9 @@ namespace ToDoReminder.Client.Common
             icon.Visible = true;
             icon.DoubleClick += (s, e) =>
             {
-                if (System.Windows.Application.Current.MainWindow != null)
-                {
-                    System.Windows.Application.Current.MainWindow.Show();
-                    System.Windows.Application.Current.MainWindow.Activate();
-                }
+                if (System.Windows.Application.Current.MainWindow == null) return;
+                System.Windows.Application.Current.MainWindow.Show();
+                System.Windows.Application.Current.MainWindow.Activate();
             };
             closeMenu.Click += (s, e) =>
             {

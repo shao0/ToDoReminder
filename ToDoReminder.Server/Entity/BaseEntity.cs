@@ -11,7 +11,7 @@ namespace ToDoReminder.Server.Entity
         public int Id { get; set; }
 
         [Column("create_datetime")]
-        public DateTime CreateDateTiem { get; set; } 
+        public DateTime CreateDateTime { get; set; } 
 
         [Column("update_datetime")]
         public DateTime UpdateDateTime { get; set; } 

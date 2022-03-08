@@ -9,10 +9,9 @@ namespace ToDoReminder.Client.ViewModels
     {
         private readonly IRegionManager region;
 
-        public MenuModel[] Menus { get; set; } = new MenuModel[]
-        {
-            new MenuModel() { Icon = "Palette", Title = "个性化", Navigate = "SkinSettingView" },
-            new MenuModel() { Icon = "Cog", Title = "系统设置", Navigate = "SystemSettingView" },
+        public MenuModel[] Menus { get; set; } = {
+            new MenuModel { Icon = "Palette", Title = "个性化", Navigate = "SkinSettingView" },
+            new MenuModel { Icon = "Cog", Title = "系统设置", Navigate = "SystemSettingView" },
         };
 
         public SettingViewModel(IRegionManager region)
@@ -51,7 +50,7 @@ namespace ToDoReminder.Client.ViewModels
         /// <summary>
         /// 导航
         /// </summary>
-        void NavigateChanged()
+        private void NavigateChanged()
         {
             region.Regions[Global.SettingRegion].RequestNavigate(CheckedMenu.Navigate);
         }

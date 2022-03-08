@@ -25,7 +25,7 @@ namespace ToDoReminder.Server.Service
                     ToDoReminderCount = toDoReminderQueryable.Count(),
                     ToDoReminderCompletedCount = toDoReminderQueryable.Count(t => t.Status == 1),
                     ToDoReminderInCompletedCount = toDoReminderQueryable.Count(t => t.Status == 0),
-                    MemoeCount = memoCount,
+                    MemoCount = memoCount,
                 };
             });
         }

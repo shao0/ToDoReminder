@@ -13,7 +13,7 @@ namespace ToDoReminder.Client.Common.Models
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime CreateDateTiem { get; set; } 
+        public DateTime CreateDateTime { get; set; } 
         /// <summary>
         /// 更新时间
         /// </summary>

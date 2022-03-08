@@ -3,8 +3,5 @@
     public class SystemSettingViewModel:NavigationViewModel
     {
 
-
-
-
     }
 }

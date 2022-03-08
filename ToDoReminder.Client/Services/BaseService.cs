@@ -25,7 +25,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<T>> AddAsync(T entity)
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.POST;
             request.Route = $"{serviceName}/Add";
             request.Parameter = entity;
@@ -34,7 +34,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<int>> DeleteAsync(int id)
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.DELETE;
             request.Route = $"{serviceName}/Delete?id={id}";
             return await client.ExecuteAsync<int>(request);
@@ -42,7 +42,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<PagedList<T>>> GetPagedListAsync(QueryParameter parameter)
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.GET;
             request.Route = $"{serviceName}/QueryList?pageIndex={parameter.IndexPage}" +
                 $"&pageSize={parameter.SizePage}" +
@@ -52,7 +52,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<T>> GetSingleAsync(int id)
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.GET;
             request.Route = $"{serviceName}/Get?id={id}";
             return await client.ExecuteAsync<T>(request);
@@ -60,7 +60,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<T>> UpdateAsync(T entity)
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.POST;
             request.Route = $"{serviceName}/Update";
             request.Parameter = entity;

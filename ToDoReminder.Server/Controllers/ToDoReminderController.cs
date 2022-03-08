@@ -28,9 +28,9 @@ namespace ToDoReminder.Server.Controllers
                 (query.Status == null 
                 || t.Status == query.Status)
                 && (query.Start == null
-                || t.CreateDateTiem > query.Start
+                || t.CreateDateTime > query.Start
                 && query.End == null
-                || t.CreateDateTiem < query.End)
+                || t.CreateDateTime < query.End)
                 && (string.IsNullOrWhiteSpace(query.Search)
                 || t.Title.Contains(query.Search)
                 || t.Description.Contains(query.Search)

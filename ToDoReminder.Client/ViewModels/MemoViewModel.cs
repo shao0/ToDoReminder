@@ -137,13 +137,13 @@ namespace ToDoReminder.Client.ViewModels
         {
 
             ea.Loading(true);
-            var paramenr = new QueryParameter
+            var parameter = new QueryParameter
             {
                 IndexPage = PagedData.GoPage ?? 0,
                 SizePage = PagedData.SizePage,
                 Search = Search,
             };
-            var apiResponse = await service.GetPagedListAsync(paramenr);
+            var apiResponse = await service.GetPagedListAsync(parameter);
             if (apiResponse.Status)
             {
                 Memos.Clear();
@@ -172,7 +172,7 @@ namespace ToDoReminder.Client.ViewModels
 
         protected virtual async void Added()
         {
-            DialogParameters param = new DialogParameters();
+            var param = new DialogParameters();
             param.Add("ModelType", ModelType.Memo);
             var dialogResult = await dialog.ShowDialog("AddDialogView", param);
             if (dialogResult.Result == ButtonResult.OK)
@@ -205,7 +205,7 @@ namespace ToDoReminder.Client.ViewModels
 
         protected virtual async void Modify(object obj)
         {
-            DialogParameters param = new DialogParameters();
+            var param = new DialogParameters();
             param.Add("Model", obj);
             param.Add("ModelType", ModelType.ToDoReminder);
             var dialogResult = await dialog.ShowDialog("AddDialogView", param);

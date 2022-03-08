@@ -119,7 +119,7 @@ namespace ToDoReminder.Client.ViewModels
         /// 设置选择项
         /// </summary>
         /// <param name="parameter"></param>
-        void SetCheckedMenu(NavigationParameters parameter)
+        public void SetCheckedMenu(NavigationParameters parameter)
         {
             var viewName = parameter.GetValue<string>("ViewName");
             SetCheckedMenu(viewName);
@@ -129,7 +129,7 @@ namespace ToDoReminder.Client.ViewModels
         /// 导航
         /// </summary>
         /// <param name="parameter"></param>
-        void NavigateChanged(NavigationParameters parameter = null)
+        private void NavigateChanged(NavigationParameters parameter = null)
         {
             region.Regions[Global.ContentRegion].RequestNavigate(CheckedMenu.Navigate, back =>
             {

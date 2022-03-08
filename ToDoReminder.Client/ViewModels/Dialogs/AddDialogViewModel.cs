@@ -116,7 +116,7 @@ namespace ToDoReminder.Client.ViewModels.Dialogs
 
         #endregion
 
-        public void OnDialogOpend(IDialogParameters parameters)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
             ModelType = parameters.GetValue<ModelType>("ModelType");
             Title = ModelType == ModelType.Memo ? "备忘录" : "待办事项";

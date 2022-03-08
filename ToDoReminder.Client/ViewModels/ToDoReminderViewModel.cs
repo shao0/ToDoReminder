@@ -67,7 +67,7 @@ namespace ToDoReminder.Client.ViewModels
         protected override async void Query()
         {
             ea.Loading(true);
-            var paramenr = new ToDoReminderParameter
+            var parameter = new ToDoReminderParameter
             {
                 IndexPage = PagedData.GoPage ?? 0,
                 SizePage = PagedData.SizePage,
@@ -76,7 +76,7 @@ namespace ToDoReminder.Client.ViewModels
                 End = EndDateTime,
                 Status = SearchStatus,
             };
-            var apiResponse = await service.QueryPagedListAsync(paramenr);
+            var apiResponse = await service.QueryPagedListAsync(parameter);
             if (apiResponse.Status)
             {
                 ToDoReminders.Clear();
@@ -102,7 +102,7 @@ namespace ToDoReminder.Client.ViewModels
         /// </summary>
         protected override async void Added()
         {
-            DialogParameters param = new DialogParameters();
+            var param = new DialogParameters();
             param.Add("ModelType", ModelType.ToDoReminder);
             var dialogResult = await dialog.ShowDialog("AddDialogView", param);
             if (dialogResult.Result == ButtonResult.OK)
@@ -133,7 +133,7 @@ namespace ToDoReminder.Client.ViewModels
         /// </summary>
         protected override async void Modify(object obj)
         {
-            DialogParameters param = new DialogParameters();
+            var param = new DialogParameters();
             param.Add("Model", obj);
             param.Add("ModelType", ModelType.ToDoReminder);
             var dialogResult = await dialog.ShowDialog("AddDialogView", param);

@@ -22,25 +22,22 @@ namespace ToDoReminder.Client.ViewModels.Statistics
 {
     public class CompletionRateViewModel : StatisticBase
     {
-
-        Func<ChartPoint, string> PointLable;
-
         public CompletionRateViewModel(IMapper mapper, IStatisticService statisticService, IEventAggregator ea, ILog log) 
             : base(mapper, statisticService, ea, log)
         {
-            PointLable = charPoint => $"{charPoint.Y}({charPoint.Participation:p})";
+            string PointLabel(ChartPoint charPoint) => $"{charPoint.Y}({charPoint.Participation:p})";
             SeriesList.Add(new PieSeries
             {
                 Title = "完成数",
                 Values = new ChartValues<ObservableValue> { new ObservableValue(0) },
                 DataLabels = true,
-                LabelPoint = PointLable,
+                LabelPoint = PointLabel,
             }); SeriesList.Add(new PieSeries
             {
                 Title = "未完成数",
                 Values = new ChartValues<ObservableValue> { new ObservableValue(0) },
                 DataLabels = true,
-                LabelPoint = PointLable,
+                LabelPoint = PointLabel,
             });
         }
 

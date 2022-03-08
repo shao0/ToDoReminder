@@ -25,12 +25,13 @@ namespace ToDoReminder.Server.DBContext
             throw new NotImplementedException();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SaveSettings();
-            return base.SaveChangesAsync();
+            return base.SaveChangesAsync(cancellationToken);
         }
-        void SaveSettings()
+
+        private void SaveSettings()
         {
             var list = ChangeTracker.Entries().ToList();
             foreach (var item in list)
@@ -38,11 +39,11 @@ namespace ToDoReminder.Server.DBContext
                 if (item.State == EntityState.Modified)
                 {
 #warning 阻止跟新字段
-                    //Entry(item.Entity).Property(nameof(BaseEntity.CreateDateTiem)).IsModified = false;
+                    Entry(item.Entity).Property(nameof(BaseEntity.CreateDateTime)).IsModified = false;
                 }
                 else if (item.State == EntityState.Added)
                 {
-                    Entry(item.Entity).Property(nameof(BaseEntity.CreateDateTiem)).CurrentValue = DateTime.Now;
+                    Entry(item.Entity).Property(nameof(BaseEntity.CreateDateTime)).CurrentValue = DateTime.Now;
                 }
                 Entry(item.Entity).Property(nameof(BaseEntity.UpdateDateTime)).CurrentValue = DateTime.Now;
             }

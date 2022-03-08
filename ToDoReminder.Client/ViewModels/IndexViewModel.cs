@@ -144,7 +144,7 @@ namespace ToDoReminder.Client.ViewModels
                 TaskBars[0].Count = statistics.ToDoReminderCount.ToString();
                 TaskBars[1].Count = statistics.ToDoReminderCompletedCount.ToString();
                 TaskBars[2].Count = statistics.ToDoReminderCompletedRatio.ToString("p");
-                TaskBars[3].Count = statistics.MemoeCount.ToString();
+                TaskBars[3].Count = statistics.MemoCount.ToString();
             }
         }
 
@@ -245,9 +245,9 @@ namespace ToDoReminder.Client.ViewModels
 
         private async void Modify(object obj)
         {
-            if (obj is ToDoReminderModel ToDoReminder)
+            if (obj is ToDoReminderModel toDoReminder)
             {
-                await SaveModel(ModelType.ToDoReminder, ToDoReminder);
+                await SaveModel(ModelType.ToDoReminder, toDoReminder);
             }
             else if (obj is MemoModel memo)
             {
@@ -266,10 +266,10 @@ namespace ToDoReminder.Client.ViewModels
 
         private async void ModifyStatus(object obj)
         {
-            if (obj is ToDoReminderModel ToDoReminder)
+            if (obj is ToDoReminderModel toDoReminder)
             {
                 ea.Loading(true);
-                await ToDoReminderSave(ToDoReminder);
+                await ToDoReminderSave(toDoReminder);
                 ea.Loading(false);
             }
         }
@@ -299,7 +299,7 @@ namespace ToDoReminder.Client.ViewModels
             }
         }
 
-        private async Task MemoSave(MemoModel model)
+        private async Task MemoSave(BaseModel model)
         {
             var memoDto = mapper.Map<MemoDTO>(model);
             var apiResponse = model.Id > 0 ? await memoService.UpdateAsync(memoDto) : await memoService.AddAsync(memoDto);
@@ -316,7 +316,7 @@ namespace ToDoReminder.Client.ViewModels
             }
         }
 
-        private async Task ToDoReminderSave(ToDoReminderModel model)
+        private async Task ToDoReminderSave(BaseModel model)
         {
             var toDoReminderDto = mapper.Map<ToDoReminderDTO>(model);
             var apiResponse = model.Id > 0 ? await toDoReminderService.UpdateAsync(toDoReminderDto) : await toDoReminderService.AddAsync(toDoReminderDto);
@@ -339,7 +339,7 @@ namespace ToDoReminder.Client.ViewModels
 
         private void InitialTimer()
         {
-            void Timer_Elapsed(object sender, EventArgs e)
+            void TimerElapsed(object sender, EventArgs e)
             {
                 NowTime = DateTime.Now;
                 if (ReminderTime <= NowTime)
@@ -347,41 +347,41 @@ namespace ToDoReminder.Client.ViewModels
                     ShowReminder();
                     return;
                 }
-                if (_observeList?.Count > 0)
-                {
-                    var first = _observeList.OrderBy(x => x.ReminderDateTime).First();
-                    if (first.ReminderDateTime < NowTime)
-                    {
-                        _observeList.Remove(first);
-                        _reminders.Add(first);
-                        ShowReminder();
-                    }
-                }
+
+                if (!(_observeList?.Count > 0)) return;
+                var first = _observeList.OrderBy(x => x.ReminderDateTime).First();
+                if (first.ReminderDateTime >= NowTime) return;
+                _observeList.Remove(first);
+                _reminders.Add(first);
+                ShowReminder();
             }
-            timer.Elapsed -= Timer_Elapsed;
-            timer.Elapsed += Timer_Elapsed;
+            timer.Elapsed -= TimerElapsed;
+            timer.Elapsed += TimerElapsed;
         }
 
         private void ShowReminder()
         {
             ReminderTime = null;
             var parameter = new DialogParameters { { "ModelList", _reminders }, };
-            dialogHost.ShowEdgeWindow("ReminderView", parameter, async result =>
+            dialogHost.ShowEdgeWindow("ReminderView", parameter, Callback);
+        }
+
+        private async void Callback(IDialogResult result)
+        {
+            if (result.Result == ButtonResult.OK)
             {
-                if (result.Result == ButtonResult.OK)
+                var modelList = result.Parameters.GetValue<IEnumerable<ToDoReminderModel>>("ModelList");
+                foreach (var item in modelList)
                 {
-                    var modelList = result.Parameters.GetValue<IEnumerable<ToDoReminderModel>>("ModelList");
-                    foreach (var item in modelList)
-                    {
-                        await ToDoReminderSave(item);
-                        _reminders.Remove(item);
-                    }
+                    await ToDoReminderSave(item);
+                    _reminders.Remove(item);
                 }
-                if (_reminders.Count != 0)
-                {
-                    ReminderTime = NowTime.AddMinutes(30);
-                }
-            });
+            }
+
+            if (_reminders.Count != 0)
+            {
+                ReminderTime = NowTime.AddMinutes(30);
+            }
         }
     }
 }

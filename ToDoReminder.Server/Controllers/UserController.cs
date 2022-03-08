@@ -29,7 +29,7 @@ namespace ToDoReminder.Server.Controllers
         {
             try
             {
-                IList<UserEntity>? list = await _service.GetAllAsync(u => u.Account == account && u.Password == password.ToMD5());
+                var list = await _service.GetAllAsync(u => u.Account == account && u.Password == password.ToMD5());
                 if (list?.Count > 0)
                 {
                     return new ApiResponse(_mapper.Map<UserDTO>(list.First()));
@@ -46,7 +46,7 @@ namespace ToDoReminder.Server.Controllers
         {
             try
             {
-                UserEntity? entity = _mapper.Map<UserEntity>(dto);
+                var entity = _mapper.Map<UserEntity>(dto);
                 entity.Password = entity.Password.ToMD5();
                 entity = await _service.AddAsync(entity);
                 dto = _mapper.Map<UserDTO>(entity);
@@ -64,7 +64,7 @@ namespace ToDoReminder.Server.Controllers
         {
             try
             {
-                IList<UserEntity>? list = await _service.GetAllAsync(u => u.Account == account && u.Password == oldPasswrod.ToMD5());
+               var list = await _service.GetAllAsync(u => u.Account == account && u.Password == oldPasswrod.ToMD5());
                 if (list?.Count > 0)
                 {
                     UserEntity? entity = list.First();

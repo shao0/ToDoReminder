@@ -11,7 +11,7 @@ namespace ToDoReminder.Client.Common.DialogServices.Proxy
     public interface IDialogHostAware 
     {
         /// <summary>
-        /// DialoHost名称
+        /// DialogHost名称
         /// </summary>
         string DialogHostName { get; set; }
 
@@ -19,7 +19,7 @@ namespace ToDoReminder.Client.Common.DialogServices.Proxy
         /// 打开过程中执行
         /// </summary>
         /// <param name="parameters"></param>
-        void OnDialogOpend(IDialogParameters parameters);
+        void OnDialogOpened(IDialogParameters parameters);
 
         /// <summary>
         /// 确定

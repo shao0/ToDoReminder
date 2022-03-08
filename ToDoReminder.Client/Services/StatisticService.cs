@@ -21,7 +21,7 @@ namespace ToDoReminder.Client.Services
         }
         public async Task<ApiResponse<StatisticDTO>> IndexDataAsync()
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.GET;
             request.Route = $"Statistic/IndexData";
             return await client.ExecuteAsync<StatisticDTO>(request);
@@ -29,7 +29,7 @@ namespace ToDoReminder.Client.Services
 
         public async Task<ApiResponse<List<StatisticDTO>>> MonthlyToDoReminderAsync()
         {
-            BaseRequest request = new BaseRequest();
+            var request = new BaseRequest();
             request.Method = RestSharp.Method.GET;
             request.Route = $"Statistic/MonthlyToDoReminder";
             return await client.ExecuteAsync<List<StatisticDTO>>(request);

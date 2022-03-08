@@ -43,11 +43,11 @@ namespace ToDoReminder.Client.Views
             Loaded -= ShellView_Loaded;
             Header.MouseMove += Header_MouseMove;
 
-            aggregator.ResgiterMessage(arg =>
+            aggregator.RegisterMessage(arg =>
             {
                 MainSnackbar.MessageQueue.Enqueue(arg.Message);
             });
-            aggregator.ResgiterLoading(arg =>
+            aggregator.RegisterLoading(arg =>
             {
                 DialogHostControl.IsOpen = arg.IsOpen;
 

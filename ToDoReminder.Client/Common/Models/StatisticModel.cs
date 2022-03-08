@@ -13,7 +13,7 @@ namespace ToDoReminder.Client.Common.Models
         public int ToDoReminderCount { get; set; }
         public int ToDoReminderCompletedCount { get; set; }
         public int ToDoReminderInCompletedCount { get; set; }
-        public int MemoeCount { get; set; }
+        public int MemoCount { get; set; }
         public double ToDoReminderCompletedRatio => ToDoReminderCompletedCount * 1d / ToDoReminderCount ;
     }
 }

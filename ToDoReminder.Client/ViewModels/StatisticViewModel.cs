@@ -56,7 +56,7 @@ namespace ToDoReminder.Client.ViewModels
         /// <summary>
         /// 导航
         /// </summary>
-        void NavigateChanged()
+        private void NavigateChanged()
         {
             region.Regions[Global.StatisticsRegion].RequestNavigate(CheckedMenu.Navigate);
         }

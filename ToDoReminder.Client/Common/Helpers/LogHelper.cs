@@ -14,7 +14,7 @@ namespace ToDoReminder.Client.Common.Helpers
 
     public class LogInfo
     {
-        public LogType Logtype { get; set; } = LogType.UnKnow;
+        public LogType LogType { get; set; } = LogType.UnKnow;
 
         public string Described { get; set; }
 
@@ -27,11 +27,11 @@ namespace ToDoReminder.Client.Common.Helpers
     {
         public string FolderPath { get; set; }
 
-        object _locker;
+        private readonly object _locker;
 
-        ConcurrentQueue<LogInfo> _logQueue;
+        private readonly ConcurrentQueue<LogInfo> _logQueue;
 
-        bool _runWrite;
+        private bool _runWrite;
 
         public LogHelper()
         {
@@ -50,7 +50,7 @@ namespace ToDoReminder.Client.Common.Helpers
         /// <returns></returns>
         public static string LogTypeString(LogType type)
         {
-            string result = "未知信息";
+            var result = "未知信息";
             switch (type)
             {
                 case LogType.Info:
@@ -65,6 +65,7 @@ namespace ToDoReminder.Client.Common.Helpers
                 case LogType.Exception:
                     result = "异常信息";
                     break;
+                case LogType.UnKnow:
                 default:
                     break;
             }
@@ -74,7 +75,7 @@ namespace ToDoReminder.Client.Common.Helpers
         /// 写入日志到文件中
         /// </summary>
         /// <param name="info">记录日志相关信息</param>
-        void WriteTask(LogInfo info)
+        private void WriteTask(LogInfo info)
         {
             var filePath = Path.Combine(FolderPath, $"{DateTime.Now:yyyy年MM月dd日}.log");
             var sb = new StringBuilder();
@@ -86,7 +87,7 @@ namespace ToDoReminder.Client.Common.Helpers
             {
                 sb.AppendLine($"来源：{exc.Source}");
             }
-            sb.AppendLine($"类别：{LogTypeString(info.Logtype)}");
+            sb.AppendLine($"类别：{LogTypeString(info.LogType)}");
             sb.AppendLine($"内容：{info.Content}");
             sb.Append('-', 32);
             sb.Append('\r');
@@ -95,7 +96,7 @@ namespace ToDoReminder.Client.Common.Helpers
         /// <summary>
         /// 循环写入日志到文件中
         /// </summary>
-        void RunWriteTask()
+        private void RunWriteTask()
         {
             while (_runWrite)
             {
@@ -109,8 +110,11 @@ namespace ToDoReminder.Client.Common.Helpers
         /// 记录日志
         /// </summary>
         /// <param name="content"></param>
-        /// <param name="logtype"></param>
-        private void Write(object content, LogType logtype, string fileName, int row, string methodName)
+        /// <param name="logType"></param>
+        /// <param name="fileName"></param>
+        /// <param name="row"></param>
+        /// <param name="methodName"></param>
+        private void Write(object content, LogType logType, string fileName, int row, string methodName)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"文件：{fileName}");
@@ -118,21 +122,17 @@ namespace ToDoReminder.Client.Common.Helpers
             sb.AppendLine($"行：{row}");
             _logQueue.Enqueue(new LogInfo
             {
-                Logtype = logtype,
+                LogType = logType,
                 Described = sb.ToString(),
                 InvokeTime = DateTime.Now,
                 Content = content,
             });
-            if (!_runWrite)
+            if (_runWrite) return;
+            lock (_locker)
             {
-                lock (_locker)
-                {
-                    if (!_runWrite && _logQueue.Count > 0)
-                    {
-                        _runWrite = true;
-                        Task.Run(RunWriteTask);
-                    }
-                }
+                if (_runWrite || _logQueue.Count <= 0) return;
+                _runWrite = true;
+                Task.Run(RunWriteTask);
             }
         }
 
@@ -140,6 +140,9 @@ namespace ToDoReminder.Client.Common.Helpers
         /// 记录错误日志
         /// </summary>
         /// <param name="content"></param>
+        /// <param name="fileName"></param>
+        /// <param name="row"></param>
+        /// <param name="methodName"></param>
         public void WriteError(
             object content,
             [CallerFilePath] string fileName = null, 
@@ -149,6 +152,9 @@ namespace ToDoReminder.Client.Common.Helpers
         /// 记录异常日志
         /// </summary>
         /// <param name="content"></param>
+        /// <param name="fileName"></param>
+        /// <param name="row"></param>
+        /// <param name="methodName"></param>
         public void WriteException(
             object content,
             [CallerFilePath] string fileName = null,
@@ -158,6 +164,9 @@ namespace ToDoReminder.Client.Common.Helpers
         /// 记录日志
         /// </summary>
         /// <param name="content"></param>
+        /// <param name="fileName"></param>
+        /// <param name="row"></param>
+        /// <param name="methodName"></param>
         public void WriteInfo(
             object content,
             [CallerFilePath] string fileName = null,
@@ -168,6 +177,9 @@ namespace ToDoReminder.Client.Common.Helpers
         /// 记录警告日志
         /// </summary>
         /// <param name="content"></param>
+        /// <param name="fileName"></param>
+        /// <param name="row"></param>
+        /// <param name="methodName"></param>
         public void WriteWarning(
             object content,
             [CallerFilePath] string fileName = null,

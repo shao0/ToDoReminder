@@ -17,7 +17,7 @@ namespace ToDoReminder.Client.Common.Extensions
         public static byte[] FilePathToBytes(this string path)
         {
             byte[] array;
-            using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
                 array = new byte[fileStream.Length];
                 fileStream.Read(array, 0, array.Length);
@@ -31,7 +31,7 @@ namespace ToDoReminder.Client.Common.Extensions
         /// <returns></returns>
         public static BitmapImage BytesToBitmapImage(this byte[] bytes)
         {
-            BitmapImage bitmapImage = new BitmapImage();
+            var bitmapImage = new BitmapImage();
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
             bitmapImage.CreateOptions = BitmapCreateOptions.DelayCreation;
             bitmapImage.BeginInit();

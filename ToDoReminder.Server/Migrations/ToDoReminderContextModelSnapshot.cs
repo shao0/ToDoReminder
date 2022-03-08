@@ -26,7 +26,7 @@ namespace ToDoReminder.Server.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreateDateTiem")
+                    b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("create_datetime");
 
@@ -56,7 +56,7 @@ namespace ToDoReminder.Server.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreateDateTiem")
+                    b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("create_datetime");
 
@@ -99,7 +99,7 @@ namespace ToDoReminder.Server.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("account");
 
-                    b.Property<DateTime>("CreateDateTiem")
+                    b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("create_datetime");
 

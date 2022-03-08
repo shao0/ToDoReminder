@@ -51,14 +51,14 @@ namespace ToDoReminder.Share
         /// <param name="pageSize">页大小</param>
         public PagedList(IEnumerable<T> source, int pageIndex, int pageSize)
         {
-            if (source is IQueryable<T> querable)
+            if (source is IQueryable<T> queryable)
             {
                 PageIndex = pageIndex;
                 PageSize = pageSize;
-                TotalCount = querable.Count();
+                TotalCount = queryable.Count();
                 TotalPages = (int)Math.Ceiling(TotalCount / (double)PageSize);
 
-                Items = querable.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+                Items = queryable.Skip(PageIndex * PageSize).Take(PageSize).ToList();
             }
             else
             {
@@ -71,7 +71,7 @@ namespace ToDoReminder.Share
             }
         }
 
-        public PagedList() => Items = new T[0];
+        public PagedList() => Items = Array.Empty<T>();
 
        
     }
